@@ -150,7 +150,7 @@ print(result)
 
 
 Q24. Write a code to take 3 numbers as an input from the user and display the greatest no as output.
-sol:
+sol: 
 
 Q25. Write a program to display only those numbers from a list that satisfy the following conditions
 
