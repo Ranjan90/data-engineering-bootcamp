@@ -248,26 +248,54 @@ Q39. Add the word "Big" in the 3rd index of the given list.
 lst = ["Welcome", "to", "Data", "course"]
 lst[3]='Big'
 Q40. What is a tuple? How is it different from list?
+sol:A tuple is a collection which is ordered and unchangeable. The elements of a tuple cannot be modified
+the tuple contains different methods like count() and index() whereas list has different methods like append  
 
 Q41. How can you create a tuple in Python?
+sol: tuple1 = ("apple", "banana", "cherry")
 
 Q42. Create a tuple and try to add your name in the tuple. Are you able to do it? Support your answer with reason.
+sol:- tuple1 = ("apple", "banana", "cherry")
+tuple1=("apple", "banana", "cherry","ranjan")
+yes we will be able to add the elements to tuple.
 
 Q43. Can two tuple be appended. If yes, write a code for it. If not, why?
+tuple1 = ("apple", "banana", "cherry","ranjan")
+tuple2=(10,20,30)
+tuple3=(tuple1,tuple2)
+output:- (('apple', 'banana', 'cherry', 'ranjan'), (10, 20, 30))
 
 Q44. Take a tuple as an input and print the count of elements in it.
+sol: n=tuple(input())
+print(len(n))
 
 Q45. What are sets in Python?
+sol:- Set is one of 4 built-in data types in Python used to store collections of data.it does not allow duplicate values.
 
 Q46. How can you create a set?
+sol: s1={10,30,50}
 
 Q47. Create a set and add "iNeuron" in your set.
+s1={10,30,50}
+s1={10,30,50,"iNeuron"}
+
 
 Q48. Try to add multiple values using add() function.
+sol: s1={10,30,50,"iNeuron"}
+    s1.add("red")
+     s1.add("Blue")
+      s1.add("green")
 
 Q49. How is update() different from add()?
+add():- this methods add elements to set
+update():-This method add the set to another set.
+ex:- thisset = {"apple", "banana", "cherry"}
+tropical = {"pineapple", "mango", "papaya"}
+thisset.update(tropical)
 
+print(thisset)
 Q50. What is clear() in sets?
+sol:- it is used to remove the elements in set 
 
 Q51. What is frozen set?
 
