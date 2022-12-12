@@ -150,7 +150,16 @@ print(result)
 
 
 Q24. Write a code to take 3 numbers as an input from the user and display the greatest no as output.
-sol: 
+sol: a=int(input())
+b=int(input())
+c=int(input())
+
+if (a>b) and (a>c):
+    print("max number is",a)
+elif(b>c) and (b>a):
+    print("max number is",b)
+else:
+    print("max number is ",c)
 
 Q25. Write a program to display only those numbers from a list that satisfy the following conditions
 
@@ -161,4 +170,16 @@ Q25. Write a program to display only those numbers from a list that satisfy the 
 - If the number is greater than 500, then stop the loop
 ```
 numbers = [12, 75, 150, 180, 145, 525, 50]
-```
+sol: 
+numbers = [12, 75, 150, 180, 145, 525, 50]
+for i in numbers:
+    if(i%5==0):
+        if(i>150):
+            continue
+        if(i>500):
+            break
+        else:
+            print(i)
+
+
+    
