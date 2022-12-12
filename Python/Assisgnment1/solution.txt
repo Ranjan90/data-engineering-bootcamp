@@ -181,5 +181,143 @@ for i in numbers:
         else:
             print(i)
 
+Q26. What is a string? How can we declare string in Python?
+sol: In Python, Strings are arrays of bytes representing Unicode characters.
+ex: str1="Welcome to Inueron"
 
+
+Q27. How can we access the string using its index?
+sol: str1= "Hello"
+print(str[2]) 
+will print 'l'
+
+Q28. Write a code to get the desired output of the following
+
+string = "Big Data iNeuron"
+sol:- string.split(' ')[2]
+desired_output = "iNeuron"
+Q29. Write a code to get the desired output of the following
+"
+string = "Big Data iNeuron"
+sol: t1=string.split(' ')[2]
+print(t1[ : :-1])
+desired_output = "norueNi"
+Q30. Resverse the string given in the above question.
+sol:- s1="norueNi"
+print(s1[::-1])
+
+Q31. How can you delete entire string at once?
+sol:- using del keyword
+ex:- del String1
+
+Q32. What is escape sequence?
+To insert characters that are illegal in a string, use an escape character.
+
+An escape character is a backslash \ followed by the character you want to insert.
+ex:- txt = "We are the so-called \"Vikings\" from the north."
+
+Q33. How can you print the below string?
+'iNeuron's Big Data Course'
+
+sol: 'iNeuron\'s Big Data Course'
+
+Q34. What is a list in Python?
+sol:Lists are used to store multiple items or collections of data in a single variable.
+ex:-thislist = ["apple", "banana", "cherry"]
+
+Q35. How can you create a list in Python?
+list1=[10,20,67,"Test1"]
+orlist1=list((10,20,67,"Test1"))
+
+Q36. How can we access the elements in a list?
+sol:-using list indexes
+ex:- list1[2],list1[3] etc
+
+
+Q37. Write a code to access the word "iNeuron" from the given list.
+
+lst = [1,2,3,"Hi",[45,54, "iNeuron"], "Big Data"]
+sol:-lst[4]
+
+Q38. Take a list as an input from the user and find the length of the list.
+sol n=list(input())
+print(len(n))
+
+Q39. Add the word "Big" in the 3rd index of the given list.
+
+lst = ["Welcome", "to", "Data", "course"]
+lst[3]='Big'
+Q40. What is a tuple? How is it different from list?
+
+Q41. How can you create a tuple in Python?
+
+Q42. Create a tuple and try to add your name in the tuple. Are you able to do it? Support your answer with reason.
+
+Q43. Can two tuple be appended. If yes, write a code for it. If not, why?
+
+Q44. Take a tuple as an input and print the count of elements in it.
+
+Q45. What are sets in Python?
+
+Q46. How can you create a set?
+
+Q47. Create a set and add "iNeuron" in your set.
+
+Q48. Try to add multiple values using add() function.
+
+Q49. How is update() different from add()?
+
+Q50. What is clear() in sets?
+
+Q51. What is frozen set?
+
+Q52. How is frozen set different from set?
+
+Q53. What is union() in sets? Explain via code.
+
+Q54. What is intersection() in sets? Explain via code.
+
+Q55. What is dictionary ibn Python?
+
+Q56. How is dictionary different from all other data structures.
+
+Q57. How can we delare a dictionary in Python?
+
+Q58. What will the output of the following?
+
+var = {}
+print(type(var))
+Q59. How can we add an element in a dictionary?
+
+Q60. Create a dictionary and access all the values in that dictionary.
+
+Q61. Create a nested dictionary and access all the element in the inner dictionary.
+
+Q62. What is the use of get() function?
+
+Q63. What is the use of items() function?
+
+Q64. What is the use of pop() function?
+
+Q65. What is the use of popitems() function?
+
+Q66. What is the use of keys() function?
+
+Q67. What is the use of values() function?
+
+Q68. What are loops in Python?
+
+Q69. How many type of loop are there in Python?
+
+Q70. What is the difference between for and while loops?
+
+Q71. What is the use of continue statement?
+
+Q72. What is the use of break statement?
+
+Q73. What is the use of pass statement?
+
+Q74. What is the use of range() function?
+
+Q75. How can you loop over a dictionary?
     
