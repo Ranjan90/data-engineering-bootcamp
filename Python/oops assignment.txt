@@ -162,25 +162,75 @@ Along with classes and objects the important concepts to grasp are:
 3.Polymorphism
 4.Encapsulation
 Q18. Describe three applications for exception processing.
+sol:Exception Processing is important to find exceptions that causes the runtime error as runtime errors halt the program execution when exception occurs.
+Exception Processing is used in Various Applications. Few examples are:
+1.Checking Appropriate use of input in an application
+2.Checking for Arithmetic exceptions in mathematical executions
+3.Checking File I/O exceptions during File handling
 
 Q19. What happens if you don't do something extra to treat an exception?
+sol: If Exceptions are not handled, flow of program will be broken during the run time which might lead to an abnormal 
+termination of the program. Inshort inability of program to handle exceptions will result in crashing of program and 
+we will not be able to get the desired result.
+
 
 Q20. What are your options for recovering from an exception in your script?
+sol: Python provides try and except statements for recovering from an exception in our script.
+try:
+  print(x)
+except:
+  print("An exception occurred") 
 
 Q21. Describe two methods for triggering exceptions in your script.
+sol: raise and assert are two methods that can be used to trigger manual exceptions in our script.
+1.raise method triggers an exception if condition provided to it turns out to be True.
+2.assert will let the program to continue execution if condition provided to it turns out to be True else exception will be raised
+# Example of raise
+x = 101
+raise Exception(f'X Value Should not exceed 5 The Provided Value of X is {x}')
+
+# Example of assert
+assert(2==10), "2 is not equal to 4"
 
 Q22. Identify two methods for specifying actions to be executed at termination time, regardless of
 whether or not an exception exists.
+sol: Python Provides else and finally blocks for specifying actions to be executed at termination time, regardless of whether an exceptions exists or not.
+
 
 Q23. What is the purpose of the try statement?
+sol: try statement is used for exception handling in python. It consists of a block of risky statements which might cause an exception during runtime. If code within try block raises exception, then the exception will be reverted to the corresponding except block when multiple except blocks are present, else it will be reverted to the default except block. In short, try and except in union avoid programs 
+from crashing during runtime due to exceptions.
+try:
+    print(30/0)
+except ZeroDivisionError:
+    print('Division by Zero is Not Possible')
 
 Q24. What are the two most popular try statement variations?
+sol: The Popular try statement variations are:
+
+1.try,except
+
+2.try,except,finally
+
+3.try,except,finally,else
+
+The try block is used to check code for exceptions during runtime. i.e. code inside try block will execute completely when there is no error in the program where as the code inside except block will execute whenever the program encounters some error in the preceeding try block.
+
+Where as the code enters the else block if and only if the try clause does not raise an exception. The code in the finally block will execute irrespective of exception.
 
 Q25. What is the purpose of the raise statement?
+sol: raise statement is used to trigger an exception explicitly, if a certain condition is not as per requirement of programmer. raise statement helps in triggering exception as per programming logic.
+
 
 Q26. What does the assert statement do, and what other statement is it like?
+sol:There are few assertions that programmer always want to be true to avoid code failure. This type of requirement is fulfilled by assert statement. This statement takes a boolean condition output of which is True which in turn helps Further Program Execute. 
+If output of assert statement is False, it raises an Assertion Error.
+ex: assert(2 == 10), f'this is not a valid statement'
 
 Q27. What is the purpose of the with/as argument, and what other statement is it like?
+sol: with/as statement simplifies use of file handling in python. When we use a with statement for file reading, there is no need for programmer to explicitly take care of activities like resource deallocation and file closing by using file.close() method. with statement itself ensures proper acquisition and release of resources. This avoids triggering of exceptions if the file closing is unknowingly forgotten in the code execution.
+with open('sample_file.txt','w') as file:
+file.write('Hello World')
 
 Q28. What are *args, **kwargs?
 
