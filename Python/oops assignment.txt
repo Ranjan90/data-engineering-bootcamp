@@ -233,6 +233,29 @@ with open('sample_file.txt','w') as file:
 file.write('Hello World')
 
 Q28. What are *args, **kwargs?
+sol: In Python, we can pass a variable number of arguments to a function using special symbols. There are two special symbols:
+*args (Non Keyword Arguments): Python has *args which allow us to pass the variable number of non keyword arguments to function.
+ex:def adder(*num):
+    sum = 0
+    
+    for n in num:
+        sum = sum + n
+
+    print("Sum:",sum)
+
+adder(3,5)
+adder(4,5,6,7)
+adder(1,2,3,5,6)
+**kwargs (Keyword Arguments): it allows us to pass the variable length of keyword arguments to the function.
+ex:def intro(**data):
+    print("\nData type of argument:",type(data))
+
+    for key, value in data.items():
+        print("{} is {}".format(key,value))
+
+intro(Firstname="Sita", Lastname="Sharma", Age=22, Phone=1234567890)
+intro(Firstname="John", Lastname="Wood", Email="johnwood@nomail.com", Country="Wakanda", Age=25, Phone=9876543210)
+
 
 Q29. How can I pass optional or keyword parameters from one function to another?
 
