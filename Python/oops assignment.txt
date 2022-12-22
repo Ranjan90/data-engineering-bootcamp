@@ -258,15 +258,101 @@ intro(Firstname="John", Lastname="Wood", Email="johnwood@nomail.com", Country="W
 
 
 Q29. How can I pass optional or keyword parameters from one function to another?
+sol: To pass, collect the arguments using the * and ** in the function’s parameter list. Through this, you will get the positional
+ arguments as a tuple and the keyword arguments as a dictionary. Pass these arguments when calling another function by using * and ** −
+ex: def f(a, *args, **kwargs):
+   ...
+   kwargs['width'] = '14.3c'
+   ...
+   g(a, *args, **kwargs)
 
 Q30. What are Lambda Functions?
+sol:A lambda function is a small anonymous function.A lambda function can take any number of arguments, but can only have one
+ expression.
+ ex: x = lambda a: a + 10
+print(x(10))
+
+
+
 
 Q31. Explain Inheritance in Python with an example?
+sol:Inheritance allows us to define a class that inherits all the methods and properties from another class.
+Parent class is the class being inherited from, also called base class.
+Child class is the class that inherits from another class, also called derived class.
+ex:
+class Person:
+  def __init__(self, fname, lname):
+    self.firstname = fname
+    self.lastname = lname
+
+  def printname(self):
+    print(self.firstname, self.lastname)
+
+
+class Student(Person):
+  def __init__(self, fname, lname, year):
+    super().__init__(fname, lname)
+    self.graduationyear = year
+
+  def welcome(self):
+    print("Welcome", self.firstname, self.lastname, "to the class of", self.graduationyear)
 
 Q32. Suppose class C inherits from classes A and B as class C(A,B).Classes A and B both have their own versions of method func(). If we call func() from an object of class C, which version gets invoked?
+sol:- If we call func() from an object of class C then function in class c will be invoked.
+ex:
+class A:
+    def sayhi(self):
+        print("I'm in A")                          
+class B:
+    def sayhi(self):
+        print("I'm in B") 
+        
+class C(A,B):
+    def sayhi(self):
+        print("I'm in C")
+        
+        
+cobj=C()
+cobj.sayhi()
 
 Q33. Which methods/functions do we use to determine the type of instance and inheritance?
+sol:python provides two methods isinstance() and issubclass() 
+1)isinstance(object, classinfo)
+Return true if the object argument is an instance of the classinfo argument, or of a (direct, indirect or virtual) subclass thereof.
+
+2)issubclass(class, classinfo)
+Return true if class is a subclass (direct, indirect or virtual) of classinfo. A class is considered a subclass of itself.
+ex:
+class MyClass(object):
+  pass
+class MySubClass(MyClass):
+  pass
+print(isinstance(MySubClass, object))
+print(issubclass(MySubClass, MyClass))
+print(isinstance(MySubClass, MyClass))
 
 Q34.Explain the use of the 'nonlocal' keyword in Python.
+sol:The nonlocal keyword is used to work with variables inside nested functions, where the variable should not belong to the 
+inner function.Use the keyword nonlocal to declare that the variable is not local.
+ex:
+def myfunc1():
+  x = "John"
+  def myfunc2():
+    nonlocal x
+    x = "hello"
+  myfunc2() 
+  return x
+
+print(myfunc1())
 
 Q35. What is the global keyword?
+sol:-The global keyword is used to create global variables so that the variable can be accessed outside the function as well
+ex:
+def myfunction():
+  global x
+  x = "hello"
+#execute the function:
+myfunction()
+
+#x should now be global, and accessible in the global scope.
+print(x)
