@@ -1,0 +1,437 @@
+1. Download vechile sales data -> https://github.com/shashank-mishra219/Hive-Class/blob/main/sales_order_data.csv
+ans -- 
+Went to above mentioned locaiton, clicked on raw and then saved the file as sales_order_data.csv in local.
+
+2. Store raw data into hdfs location
+ans -- 
+did drag and drop and get sales_order_data.csv file to hive environment on iNeuron lab.
+first checked the data in hadoop dir /tmp -- hadoop fs -ls /tmp
+then put the file 'sales_order_data.csv' to hadoop dir /tmp -- hadoop fs -put sales_order_data.csv /tmp
+
+
+3. Create a internal hive table "sales_order_csv" which will store csv data sales_order_csv .. make sure to skip header row while creating table
+ans --
+First created a database -- create database hive_assignment_1;
+then command -- use hive_assignment_1;
+then created table 'sales_order_csv' --
+create table sales_order_csv
+(
+ORDERNUMBER int,
+QUANTITYORDERED int,
+PRICEEACH float,
+ORDERLINENUMBER int,
+SALES float,
+STATUS string,
+QTR_ID int,
+MONTH_ID int,
+YEAR_ID int,
+PRODUCTLINE string,
+MSRP int,
+PRODUCTCODE string,
+PHONE string,
+CITY string,
+STATE string,
+POSTALCODE string,
+COUNTRY string,
+TERRITORY string,
+CONTACTLASTNAME string,
+CONTACTFIRSTNAME string,
+DEALSIZE string
+)
+row format delimited
+fields terminated by ','
+tblproperties("skip.header.line.count"="1") ;  
+
+
+4. Load data from hdfs path into "sales_order_csv" 
+ans --
+load data inpath '/tmp/sales_order_data.csv' into table sales_order_csv;
+also, checked in hive warehouse locaiton, and table file found in it.
+hadoop fs -ls /user/hive/warehouse/hive_assignment_1.db
+
+
+5. Create an internal hive table which will store data in ORC format "sales_order_orc"
+ans --
+create table sales_order_orc
+(
+ORDERNUMBER int,
+QUANTITYORDERED int,
+PRICEEACH float,
+ORDERLINENUMBER int,
+SALES float,
+STATUS string,
+QTR_ID int,
+MONTH_ID int,
+YEAR_ID int,
+PRODUCTLINE string,
+MSRP int,
+PRODUCTCODE string,
+PHONE string,
+CITY string,
+STATE string,
+POSTALCODE string,
+COUNTRY string,
+TERRITORY string,
+CONTACTLASTNAME string,
+CONTACTFIRSTNAME string,
+DEALSIZE string
+)
+stored as orc;
+
+
+6. Load data from "sales_order_csv" into "sales_order_orc"
+ans --
+from sales_order_csv insert overwrite table sales_order_orc select *;
+
+
+Perform below menioned queries on "sales_order_orc" table :
+
+a. Calculatye total sales per year
+ans --
+    > select year_id, sum(sales) as total_sales_per_year
+    > from sales_order_orc
+    > group by year_id;
+
+query result -
+year_id total_sales_per_year
+2003    3516979.547241211
+2004    4724162.593383789
+2005    1791486.7086791992
+
+
+b. Find a product for which maximum orders were placed
+ans --
+    > select distinct productline,
+    > sum(QUANTITYORDERED) over (partition by productline) as sum_qty
+    > from sales_order_orc
+    > order by sum_qty desc
+    > limit 1;
+
+query result -
+productline     sum_qty
+Classic Cars    33992
+
+
+c. Calculate the total sales for each quarter
+ans --
+    > select year_id, qtr_id, sum(sales) as total_sales
+    > from sales_order_orc
+    > group by year_id, qtr_id;
+
+query result -
+year_id qtr_id  total_sales
+2003    1       445094.6897583008
+2004    1       833730.6786499023
+2005    1       1071992.3580932617
+2003    2       562365.2218017578
+2004    2       766260.7305297852
+2005    2       719494.3505859375
+2003    3       649514.5415039062
+2004    3       1109396.2674560547
+2003    4       1860005.094177246
+2004    4       2014774.9167480469
+
+
+d. In which quarter sales was minimum
+ans -
+    > select year_id, qtr_id, sum(sales) as total_sales
+    > from sales_order_orc
+    > group by year_id, qtr_id
+    > order by total_sales desc
+    > limit 1;
+
+query result -
+year_id qtr_id  total_sales
+2004    4       2014774.9167480469
+
+
+e. In which country sales was maximum and in which country sales was minimum
+ans --
+(select country, sum(sales) as total_sales
+from hive_sales_order_data
+group by country
+order by total_sales desc
+limit 1)
+union
+(select country, sum(sales) as total_sales
+from hive_sales_order_data
+group by country
+order by total_sales 
+limit 1)
+
+(Did try with above command, but looks like union is very time consuming task in hive. So I killed it and run below command)
+and I ran below command, it worked.
+
+select * from (
+(select country, sum(sales) as total_sales
+from sales_order_orc
+group by country order by total_sales desc limit 1) as lst,
+(select country, sum(sales) as total_sales
+from sales_order_orc
+group by country
+order by total_sales 
+limit 1) as fst
+);
+
+query result -
+lst.country     lst.total_sales fst.country     fst.total_sales
+USA     3627982.825744629       Ireland 57756.43029785156
+
+
+f. Calculate quartelry sales for each city
+ans --
+    > select city, year_id, qtr_id, sum(sales) as total_sales
+    > from sales_order_orc
+    > group by city, year_id, qtr_id
+    > order by city, year_id, qtr_id;
+
+query result -
+city    year_id qtr_id  total_sales
+Aaarhus 2003    4       40321.60998535156
+Aaarhus 2004    4       60273.93981933594
+Allentown       2004    3       71930.61041259766
+Allentown       2004    4       44040.729736328125
+Allentown       2005    2       6166.7998046875
+Barcelona       2003    2       4219.2001953125
+Barcelona       2003    4       44009.30993652344
+Barcelona       2004    4       30183.35009765625
+Bergamo 2003    1       56181.320068359375
+Bergamo 2003    4       40077.71026611328
+Bergamo 2004    4       41696.68981933594
+Bergen  2003    4       95277.17993164062
+Bergen  2004    3       16363.099975585938
+Boras   2003    4       48710.92053222656
+Boras   2004    3       53941.68981933594
+Boras   2005    1       31606.72021484375
+Boston  2003    4       63730.7802734375
+Boston  2004    2       26677.350219726562
+Boston  2004    3       15344.640014648438
+Boston  2005    2       48316.89001464844
+Brickhaven      2003    2       7277.35009765625
+Brickhaven      2003    3       34992.39978027344
+Brickhaven      2004    3       79982.13989257812
+Brickhaven      2004    4       11528.52978515625
+Brickhaven      2005    1       31474.7802734375
+Bridgewater     2003    4       26115.800537109375
+Bridgewater     2004    2       44130.52062988281
+Bridgewater     2005    2       31648.469970703125
+Brisbane        2003    3       34100.030029296875
+Brisbane        2004    1       16118.479858398438
+Bruxelles       2004    1       18800.089721679688
+Bruxelles       2004    3       47760.479736328125
+Bruxelles       2005    2       8411.949829101562
+Burbank 2003    4       8234.559936523438
+Burbank 2004    1       37850.07958984375
+Burlingame      2003    3       42031.83020019531
+Burlingame      2003    4       62305.47009277344
+Burlingame      2004    4       2916.199951171875
+Burlingame      2005    1       13529.570190429688
+Cambridge       2004    1       21782.699951171875
+Cambridge       2004    2       14380.920043945312
+Cambridge       2004    3       48828.71942138672
+Cambridge       2004    4       54251.659912109375
+Charleroi       2003    2       1711.260009765625
+Charleroi       2003    3       1637.199951171875
+Charleroi       2004    4       13463.480224609375
+Charleroi       2005    1       16628.16015625
+Chatswood       2003    3       28397.259521484375
+Chatswood       2004    3       41297.14050292969
+Chatswood       2004    4       37905.14990234375
+Chatswood       2005    2       43971.429931640625
+Cowes   2004    1       26906.68017578125
+Cowes   2004    4       51334.15966796875
+Dublin  2004    1       38784.470458984375
+Dublin  2004    3       18971.959838867188
+Espoo   2003    3       31569.430053710938
+Espoo   2004    2       31018.230102539062
+Espoo   2005    1       51373.49072265625
+Frankfurt       2003    1       11432.33984375
+Frankfurt       2003    4       27257.790283203125
+Frankfurt       2004    1       37266.48937988281
+Frankfurt       2004    4       9214.969970703125
+Gensve  2004    1       50432.549560546875
+Gensve  2004    3       67281.00903320312
+Glen Waverly    2003    4       37878.54992675781
+Glen Waverly    2004    3       12334.819580078125
+Glen Waverly    2005    2       14378.089965820312
+Glendale        2003    2       20350.949768066406
+Glendale        2003    3       7600.1201171875
+Glendale        2003    4       5142.14990234375
+Glendale        2004    4       29343.349975585938
+Glendale        2005    1       3987.199951171875
+Graz    2003    4       43488.740234375
+Graz    2005    1       8775.159912109375
+Helsinki        2003    4       42083.499755859375
+Helsinki        2004    3       42744.0595703125
+Helsinki        2005    1       26422.819458007812
+Kobenhavn       2003    1       58871.110107421875
+Kobenhavn       2004    2       36079.010009765625
+Kobenhavn       2004    4       24078.610107421875
+Kobenhavn       2005    2       26012.87060546875
+Koln    2003    4       31363.1796875
+Koln    2004    4       68943.40051269531
+Las Vegas       2003    2       33847.61975097656
+Las Vegas       2004    3       34453.84973144531
+Las Vegas       2004    4       14449.609741210938
+Lille   2003    4       48874.28088378906
+Lille   2004    1       20178.1298828125
+Liverpool       2003    4       26797.210083007812
+Liverpool       2004    2       50408.25
+Liverpool       2005    2       40802.8095703125
+London  2003    2       32376.29052734375
+London  2003    4       70230.12927246094
+London  2004    1       8477.219970703125
+London  2004    4       13739.900024414062
+Los Angeles     2003    4       24159.14013671875
+Los Angeles     2004    1       23889.320068359375
+Lule    2003    1       9748.999755859375
+Lule    2004    4       66005.8798828125
+Lyon    2003    4       41535.11022949219
+Lyon    2004    1       101339.13977050781
+Madrid  2003    1       44621.96008300781
+Madrid  2003    2       100689.03051757812
+Madrid  2003    3       47727.82019042969
+Madrid  2003    4       112573.33026123047
+Madrid  2004    1       105491.33990478516
+Madrid  2004    2       119656.04028320312
+Madrid  2004    3       21986.269897460938
+Madrid  2004    4       203007.4793701172
+Madrid  2005    1       207555.18994140625
+Madrid  2005    2       119242.98052978516
+Makati City     2003    1       55245.02014160156
+Makati City     2003    4       22841.960083007812
+Makati City     2004    4       15928.750244140625
+Manchester      2003    1       51017.919860839844
+Manchester      2004    4       106789.88977050781
+Marseille       2003    2       52481.840087890625
+Marseille       2004    4       20136.859985351562
+Marseille       2005    1       2317.43994140625
+Melbourne       2003    2       60135.84033203125
+Melbourne       2004    1       49637.57067871094
+Melbourne       2004    4       91221.99914550781
+Minato-ku       2004    2       25928.750244140625
+Minato-ku       2004    4       55888.65026855469
+Minato-ku       2005    1       38191.38977050781
+Minato-ku       2005    2       553.9500122070312
+Montreal        2003    4       15947.290405273438
+Montreal        2004    2       24564.530029296875
+Montreal        2005    2       33692.97009277344
+Munich  2004    3       34993.92004394531
+NYC     2003    1       32647.809814453125
+NYC     2003    2       93239.56018066406
+NYC     2003    4       89600.84008789062
+NYC     2004    2       71860.779296875
+NYC     2004    3       63027.92004394531
+NYC     2004    4       210410.85986328125
+Nantes  2003    2       16560.300048828125
+Nantes  2004    3       61310.880126953125
+Nantes  2004    4       23031.589599609375
+Nantes  2005    1       59617.39978027344
+Nantes  2005    2       43784.69012451172
+Nashua  2003    1       12133.25
+Nashua  2003    4       63981.449768066406
+Nashua  2004    4       55570.59973144531
+New Bedford     2003    3       45738.38952636719
+New Bedford     2003    4       64053.130615234375
+New Bedford     2004    4       49504.379150390625
+New Bedford     2005    1       48578.95935058594
+New Haven       2003    4       42498.760498046875
+New Haven       2004    2       36973.309814453125
+Newark  2004    1       8722.1201171875
+Newark  2004    2       27987.069580078125
+Newark  2005    2       46518.99951171875
+North Sydney    2003    3       47191.76013183594
+North Sydney    2003    4       41791.949462890625
+North Sydney    2005    1       65012.41955566406
+Osaka   2004    1       50490.64013671875
+Osaka   2004    2       17114.43017578125
+Oslo    2003    4       45078.759765625
+Oslo    2004    3       34145.47021484375
+Oulu    2003    3       37501.580322265625
+Oulu    2004    2       17813.40008544922
+Oulu    2005    1       49055.40026855469
+Paris   2003    2       38217.41046142578
+Paris   2003    3       25624.880004882812
+Paris   2004    1       51172.649658203125
+Paris   2004    2       27931.210083007812
+Paris   2004    3       2173.60009765625
+Paris   2004    4       89436.60034179688
+Paris   2005    1       20321.52978515625
+Paris   2005    2       14066.7998046875
+Pasadena        2003    3       55776.119873046875
+Pasadena        2003    4       4512.47998046875
+Pasadena        2005    1       44273.359436035156
+Philadelphia    2003    1       27398.820434570312
+Philadelphia    2003    4       40061.66003417969
+Philadelphia    2004    2       7287.240234375
+Philadelphia    2004    4       76441.41040039062
+Reggio Emilia   2003    4       44669.740478515625
+Reggio Emilia   2004    3       56421.650390625
+Reggio Emilia   2005    2       41509.94006347656
+Reims   2003    2       18971.959716796875
+Reims   2003    3       15146.31982421875
+Reims   2004    4       48895.59014892578
+Reims   2005    1       52029.07043457031
+Salzburg        2003    2       38629.14001464844
+Salzburg        2004    3       6693.2802734375
+Salzburg        2004    4       45001.10986328125
+Salzburg        2005    2       59475.100036621094
+San Diego       2004    1       87489.23010253906
+San Francisco   2003    1       18695.579833984375
+San Francisco   2003    4       121110.76025390625
+San Francisco   2004    4       30348.720336914062
+San Francisco   2005    1       54203.6201171875
+San Jose        2004    2       64600.33984375
+San Jose        2005    2       95409.93041992188
+San Rafael      2003    1       12398.56005859375
+San Rafael      2003    3       122368.67102050781
+San Rafael      2003    4       50360.88977050781
+San Rafael      2004    1       48922.76989746094
+San Rafael      2004    3       93928.72961425781
+San Rafael      2004    4       113622.75903320312
+San Rafael      2005    1       205993.9287109375
+San Rafael      2005    2       7261.75
+Sevilla 2003    4       51502.74108886719
+Sevilla 2004    4       3220.8800659179688
+Singapore       2003    2       43657.47009277344
+Singapore       2003    3       44219.36022949219
+Singapore       2003    4       77809.37023925781
+Singapore       2004    1       24219.58984375
+Singapore       2004    2       45788.72009277344
+Singapore       2004    3       46030.7197265625
+Singapore       2005    1       4175.60009765625
+Singapore       2005    2       2587.5799560546875
+South Brisbane  2003    3       10640.290161132812
+South Brisbane  2003    4       27098.800048828125
+South Brisbane  2005    1       21730.029907226562
+Stavern 2003    1       54701.999755859375
+Stavern 2003    4       1474.6600341796875
+Stavern 2004    4       60422.530029296875
+Strasbourg      2004    2       44758.12951660156
+Strasbourg      2005    2       35680.350341796875
+Torino  2004    3       94117.25988769531
+Toulouse        2003    3       17251.08056640625
+Toulouse        2003    4       38098.240234375
+Toulouse        2005    1       15139.1201171875
+Tsawassen       2004    2       31302.500244140625
+Tsawassen       2004    3       43332.349609375
+Vancouver       2003    4       38662.209716796875
+Vancouver       2004    4       36576.70983886719
+Versailles      2004    1       5759.419921875
+Versailles      2004    4       59074.90026855469
+White Plains    2003    4       38682.949462890625
+White Plains    2004    4       46873.04016113281
+
+
+h. Find a month for each year in which maximum number of quantities were sold
+ans --
+    > select month_id, year_id, sum(QUANTITYORDERED) as qty
+    > from sales_order_orc
+    > group by month_id, year_id
+    > order by qty desc
+    > limit 1;
+
+query result -
+month_id        year_id qty
+11      2004    10678
+
