@@ -1,1 +1,224 @@
 
+Hive Practical questions:
+
+Hive Join operations
+
+Create a  table named CUSTOMERS(ID | NAME | AGE | ADDRESS   | SALARY)
+ans  --
+create table customers
+(
+id int,
+name string,
+age int,
+address string,
+salary int
+)
+row format delimited
+feilds terminated by ',';
+
+Create a Second  table ORDER(OID | DATE | CUSTOMER_ID | AMOUNT
+ans --
+create table orders
+(
+oid int,
+date string,
+customer_id int,
+amt int
+)
+row format delimited
+feilds terminated by ',';
+
+Now perform different joins operations on top of these tables
+(Inner JOIN, LEFT OUTER JOIN ,RIGHT OUTER JOIN ,FULL OUTER JOIN)
+
+# inner join
+select * from customer c
+inner join orders o
+on c.id = o.customer_id
+
+# left join
+select * from customer c
+left join orders o
+on c.id = o.customer_id
+
+# right join
+select * from customer c
+right join orders o
+on c.id = o.customer_id
+
+# full outer join
+select * from customer c
+full outer join orders o
+on c.id = o.customer_id
+
+
+
+BUILD A DATA PIPELINE WITH HIVE
+
+Download a data from the given location - 
+https://archive.ics.uci.edu/ml/machine-learning-databases/00360/
+
+1. Create a hive table as per given schema in your dataset 
+ans --
+create table AirQue
+(
+date_d string,
+time string,
+CO_GT float,
+PT08_S1_CO int,
+NMHC_GT int,
+C6H6_GT float,
+PT08_S2_NMHC int,
+NOx_GT int,
+PT08_S3_NOx int,
+NO2_GT int,
+PT08_S4_NO2 int,
+PT08_S5_O3 int,
+T float,
+RH float,
+AH float
+)
+row format delimited
+fields terminated by ','
+tblproperties("skip.header.line.count"="1");
+
+2. try to place a data into table location
+ans -- 
+load data inpath '/data_files/AirQualityUCI_Copy.csv' into table AirQue;
+
+3. Perform a select operation.
+ans --
+select * from AirQue limit 5;
+ 
+4. Fetch the result of the select operation in your local as a csv file.
+ans --
+created a airque_to_csv.hql and content of this file as below.
+use hive_assign_2;
+select * from AirQue;
+
+and then ran a command on hive container
+hive -f airque_to_csv.hql >> airque_to_csv.csv
+
+ 
+5. Perform group by operation.
+ans -- 
+To perform group by operation. I did use aggregate funtion sum.
+select date_d,
+sum(CO_GT), sum(PT08_S1_CO), sum(NMHC_GT), sum(C6H6_GT),
+sum(PT08_S2_NMHC), sum(NOx_GT), sum(PT08_S3_NOx), sum(NO2_GT),
+sum(PT08_S4_NO2), sum(PT08_S5_O3), sum(T), sum(RH), sum(AH) from AirQue
+group by date_d
+ 
+6. Perform filter operation at least 5 kinds of filter examples.
+first filter operation--
+select * from AirQue where date_d = '10-03-2004';
+
+second filter operation --
+select * from AirQue where date_d = '10-03-2004' and time > '20:00:00';
+
+third filter operation --
+select * from AirQue where date_d = '10-03-2004' limit 3;
+
+forth filter operation --
+select * from AirQue where date_d in ('10-03-2004', '11-03-2004');
+
+fifth filter operation --
+select date_d,count(CO_GT) from AirQue where date_d = '11-03-2004' group by date_d;
+
+ 
+7. show and example of regex operation
+ans --
+select distinct(date_d) from AirQue where date_d regexp '^01';
+
+8. alter table operation
+ans --
+added a column 'myname' with string as datatype
+alter table AirQue add columns (myname string);
+
+deleted column 'myname'
+we can not just drop a column in hive with the command - alter table table_name drop column_name;
+So I used 'replace'
+
+ alter table AirQue replace columns (date_d string,
+ time string,
+ CO_GT float,
+ PT08_S1_CO int,
+ NMHC_GT int,
+ C6H6_GT float,
+ PT08_S2_NMHC int,
+ NOx_GT int,
+ PT08_S3_NOx int,
+ NO2_GT int,
+ PT08_S4_NO2 int,
+ PT08_S5_O3 int,
+ T float,
+ RH float,
+ AH float);
+ 
+9 . drop table operation
+ans --
+drop table airque;
+
+10 . order by operation.
+ans -- Below is the example of count of negative numbers in all numeric columns from AirQue table and ordered by the count as asc
+
+select 'CO_GT' as word, count(CO_GT) as count from AirQue where CO_GT < 0
+union
+select 'PT08_S1_CO' as word, count(PT08_S1_CO) as count from AirQue where PT08_S1_CO < 0
+union
+select 'NMHC_GT' as word, count(NMHC_GT) as count from AirQue where NMHC_GT < 0
+union
+select 'C6H6_GT' as word, count(C6H6_GT) as count from AirQue where C6H6_GT < 0
+union
+select 'PT08_S2_NMHC' as word, count(PT08_S2_NMHC) as count from AirQue where PT08_S2_NMHC < 0
+union
+select 'NOx_GT' as word, count(NOx_GT) as count from AirQue where NOx_GT < 0
+union
+select 'PT08_S3_NOx' as word, count(PT08_S3_NOx) as count from AirQue where PT08_S3_NOx < 0
+union
+select 'NO2_GT' as word, count(NO2_GT) as count from AirQue where NO2_GT < 0
+union
+select 'PT08_S4_NO2' as word, count(PT08_S4_NO2) as count from AirQue where PT08_S4_NO2 < 0
+union
+select 'PT08_S5_O3' as word, count(PT08_S5_O3) as count from AirQue where PT08_S5_O3 < 0
+union
+select 'T' as word, count(T) as count from AirQue where T < 0
+union
+select 'RH' as word, count(RH) as count from AirQue where RH < 0
+union
+select 'AH' as word, count(AH) as count from AirQue where AH < 0
+order by count
+ 
+
+11 . where clause operations you have to perform.
+ans -- 
+select * from AirQue where date_d in ('10-03-2004', '11-03-2004');
+
+
+12 . sorting operation you have to perform.
+ans --
+select pt08_s1_co from AirQue where date_d = '10-03-2004' sort by pt08_s1_co;
+
+
+13 . distinct operation you have to perform. 
+ans --
+select distinct(date_d) from AirQue limit 5;
+
+
+14 . like an operation you have to perform.
+ans --
+select * from AirQue where date_d like '01-01%';
+
+
+15 . union operation you have to perform.
+ans -- below is an example of count of negative number in columns CO_GT and PT08_S1_CO from table AirQue.
+select 'CO_GT' as word, count(CO_GT) as count from AirQue where CO_GT < 0
+union
+select 'PT08_S1_CO' as word, count(PT08_S1_CO) as count from AirQue where PT08_S1_CO < 0
+
+
+16. table view operation you have to perform. 
+ans -- below is an example of view for distinct date values
+create view unique_dates as
+select distinct date_d from AirQue;
+
