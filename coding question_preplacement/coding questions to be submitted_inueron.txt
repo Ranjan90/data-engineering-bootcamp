@@ -1,0 +1,77 @@
+coding questions to be submitted
+1. Write a PySpark code to read a CSV file named "employees.csv" containing the following columns: "employee_id", "name", "age", "department". Display the top 10 records from the DataFrame.
+
+sol:-
+import pyspark
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType,StructField, StringType, IntegerType
+spark = SparkSession.builder.appName('SparkByExamples.com').getOrCreate()
+
+
+df = spark.read.option("header",True).option("inferSchema",True).csv("/input_data/employees.csv")
+df = spark.read.csv("/tmp/resources/employees.csv")
+df.show(10)
+
+
+
+2.  Given a PySpark DataFrame named "sales_data" with columns "product_name" and "revenue", write a code to calculate the total revenue for each product and display the result in descending order.
+
+sol:-  sales_data.groupBy("product_name").sum("revenue").show(100)
+
+
+
+3. Write a PySpark code to read a JSON file named "students.json" containing student records with the following schema: "name" (string), "age" (integer), "grade" (string). Filter the DataFrame to include only students whose age is greater than 18.
+
+sol:-
+import pyspark
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType,StructField, StringType, IntegerType
+spark = SparkSession.builder.appName('SparkByExamples.com').getOrCreate()
+
+schema = StructType([ \
+        StructField("name",StringType(),True), \
+        StructField("age", IntegerType(), True), \
+        StructField("grade", StringType(), True), \    
+ ])
+
+
+# Read JSON file into dataframe
+df = spark.read.schema(schema) \
+        .json("resources/students.json")
+df.filter(col("age")>18).show()
+
+
+
+
+4. Consider a PySpark DataFrame named "transactions" with columns "transaction_id", "user_id", and "amount". Write a code to calculate the average transaction amount for each user and display the result.
+
+sol:- transactions.groupBy("user_id").avg("amount").show()
+
+
+5. Given a PySpark DataFrame named "logs" with columns "timestamp" (timestamp) and "event" (string), write a code to count the number of events that occurred in each hour and display the result sorted by the hour.
+
+sol:-logs.groupBy(timestamp).count(event).orderBy("timestamp").show()
+
+
+6.  Retrieve all the customers from the "Customers" table whose age is greater than 25 and have made at least one purchase.
+sol:-select * from Customers where age >25 and purchase > 1
+
+
+7. Find the total number of orders placed by each customer and display the results in descending order of the number of orders.
+sol:- select customer,sum(orders) as 'Total orders' from orders group by customer having orders desc
+
+
+8. Retrieve the names of all products that are currently out of stock from the "Products" table.
+sol:- select product_names from products where status='out of stock'
+
+
+9. Calculate the average price of all products in each category and display the results along with the category name.
+sol:- select productname,category name,avg(price) from products group by  productname,category name
+
+
+
+10. Retrieve the top 5 customers who have spent the highest total amount on purchases.
+
+select top 5 customername from Customers order by purchases desc
+
+
